@@ -16,9 +16,9 @@ SECTION "Header", ROM0[$104]
 SECTION "Main", ROM0[$150]
 
 Begin:
-	nop ; Originally had debug stuff here, but not necessary
+	di ; Not using interrupts at all, might as well disable them
 
-WaitForVBlank:
+WaitForVBlank: ; Need to wait for VBlank period before messing with graphics
 	ld	a, [rLY]
 	cp	144
 	jr	c, WaitForVBlank
@@ -50,7 +50,7 @@ DrawText:
 	ld	hl, _SCRN0 + $21
 .loop:
 	ld	a, [bc]
-	cp	$FF
+	cp	$FF ; Finish if 0xFF terminator is reached
 	jp	nc, EnableLCD
 	inc	bc
 	ld	[hli], a
